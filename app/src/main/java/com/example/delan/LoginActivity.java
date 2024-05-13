@@ -1,66 +1,69 @@
 package com.example.delan;
 
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String DB_URL = "jdbc:jtds:sqlserver://your_database_server:port/your_database_name";
-    private static final String DB_USER = "your_database_username";
-    private static final String DB_PASSWORD = "your_database_password";
+    TextInputEditText login, pass;
+    Button reg_btn, login_btn, google_btn;
+    private FirebaseAuth mAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        login = findViewById(R.id.usernameEditText);
+        pass = findViewById(R.id.password);
+        reg_btn = findViewById(R.id.register_btn);
+        login_btn = findViewById(R.id.login_btn);
+        google_btn = findViewById(R.id.google_btn);
+        mAuth = FirebaseAuth.getInstance();
 
-        // Пример вызова метода авторизации
-        authenticateUser("username", "password");
+        reg_btn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        });
+
+        login_btn.setOnClickListener(v -> {
+            String loginstr, passstr;
+            loginstr = Objects.requireNonNull(login.getText()).toString();
+            passstr = Objects.requireNonNull(pass.getText()).toString();
+            mAuth.signInWithEmailAndPassword(loginstr, passstr)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
     }
-
-    private void authenticateUser(String username, String password) {
-        new AuthenticateUserTask().execute(username, password);
-    }
-
-    private class AuthenticateUserTask extends AsyncTask<String, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-            String username = params[0];
-            String password = params[1];
-            try {
-                Class.forName("net.sourceforge.jtds.jdbc.Driver");
-                Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-                String sql = "SELECT * FROM Users WHERE username = ? AND password = ?";
-                PreparedStatement pstmt = conn.prepareStatement(sql);
-                pstmt.setString(1, username);
-                pstmt.setString(2, password);
-                ResultSet resultSet = pstmt.executeQuery();
-                boolean exists = resultSet.next();
-                resultSet.close();
-                pstmt.close();
-                conn.close();
-                return exists;
-            } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean isAuthenticated) {
-            if (isAuthenticated) {
-                Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
-            }
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 }

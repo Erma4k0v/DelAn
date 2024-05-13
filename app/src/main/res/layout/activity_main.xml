@@ -13,7 +13,7 @@
 
     <!-- Password field -->
     <EditText
-        android:id="@+id/passwordEditText"
+        android:id="@+id/passwordConfirm"
         android:layout_width="match_parent"
         android:layout_height="74dp"
         android:hint="Password"

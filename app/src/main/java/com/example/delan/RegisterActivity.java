@@ -1,63 +1,71 @@
 package com.example.delan;
 
-import android.os.AsyncTask;
+import static androidx.constraintlayout.widget.ConstraintLayoutStates.TAG;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
+    TextInputEditText editTextLogin, editTextPass, editTextPassConf;
+    Button buttonReg;
+    private FirebaseAuth mAuth;
 
-    private static final String DB_URL = "jdbc:jtds:sqlserver://your_database_server:port/your_database_name";
-    private static final String DB_USER = "your_database_username";
-    private static final String DB_PASSWORD = "your_database_password";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        editTextLogin = findViewById(R.id.usernameEditText);
+        editTextPass = findViewById(R.id.password);
+        editTextPassConf = findViewById(R.id.passwordConfirm);
+        buttonReg = findViewById(R.id.register_btn);
+        mAuth = FirebaseAuth.getInstance();
 
-        // Пример вызова метода регистрации
-        registerUser("username", "password");
-    }
+        buttonReg.setOnClickListener(v -> {
+            String login, pass, passConf;
+            login = Objects.requireNonNull(editTextLogin.getText()).toString();
+            pass = Objects.requireNonNull(editTextPass.getText()).toString();
+            passConf = Objects.requireNonNull(editTextPassConf.getText()).toString();
+            if (pass.equals(passConf)) {
+                mAuth.createUserWithEmailAndPassword(login, pass)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Intent intent = new Intent(this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                                Toast.makeText(RegisterActivity.this, "Вы успешно зарегистрировались",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(RegisterActivity.this, "Регистрация провалена",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
-    private void registerUser(String username, String password) {
-        new RegisterUserTask().execute(username, password);
-    }
-
-    private class RegisterUserTask extends AsyncTask<String, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-            String username = params[0];
-            String password = params[1];
-            try {
-                Class.forName("net.sourceforge.jtds.jdbc.Driver");
-                Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-                String sql = "INSERT INTO Users (username, password) VALUES (?, ?)";
-                PreparedStatement pstmt = conn.prepareStatement(sql);
-                pstmt.setString(1, username);
-                pstmt.setString(2, password);
-                int rowsInserted = pstmt.executeUpdate();
-                pstmt.close();
-                conn.close();
-                return rowsInserted > 0;
-            } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
-                return false;
             }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (success) {
-                Toast.makeText(RegisterActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(RegisterActivity.this, "Registration failed", Toast.LENGTH_SHORT).show();
-            }
+            else Toast.makeText(this, "Пароли не совпадают", Toast.LENGTH_SHORT).show();
+        });
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
+
 }

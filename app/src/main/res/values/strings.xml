@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">DelAn</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="btn_login">LOGIN</string>
+    <string name="register">Register</string>
+    <string name="btn_register">REGISTER</string>
+    <string name="btn_google">GOOGLE</string>
+    <string-array name="UserType">
+        <item>Поставщик</item>
+        <item>Заказчик</item>
+        <item>Курьер</item>
+    </string-array>
 </resources>

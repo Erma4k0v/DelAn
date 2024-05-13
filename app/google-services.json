@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "446011017649",
+    "project_id": "prefab-rampart-316911",
+    "storage_bucket": "prefab-rampart-316911.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:446011017649:android:15a6ee36265447ee6ed590",
+        "android_client_info": {
+          "package_name": "com.example.delan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "446011017649-21t8l35r63c985af13rk5f6k9jeup2tp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRfUbQ-t1XT2VYXRaFDG9Qe2yOCfo8dPs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "446011017649-21t8l35r63c985af13rk5f6k9jeup2tp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
