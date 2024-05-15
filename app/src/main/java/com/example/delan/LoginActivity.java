@@ -28,7 +28,6 @@ public class LoginActivity extends AppCompatActivity {
         pass = findViewById(R.id.password);
         reg_btn = findViewById(R.id.register_btn);
         login_btn = findViewById(R.id.login_btn);
-        google_btn = findViewById(R.id.google_btn);
         mAuth = FirebaseAuth.getInstance();
 
         reg_btn.setOnClickListener(v -> {
@@ -40,21 +39,25 @@ public class LoginActivity extends AppCompatActivity {
             String loginstr, passstr;
             loginstr = Objects.requireNonNull(login.getText()).toString();
             passstr = Objects.requireNonNull(pass.getText()).toString();
-            mAuth.signInWithEmailAndPassword(loginstr, passstr)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            if (loginstr != null && passstr != null) {
+                mAuth.signInWithEmailAndPassword(loginstr, passstr)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+            }
         });
     }
+
     @Override
     public void onStart() {
         super.onStart();
