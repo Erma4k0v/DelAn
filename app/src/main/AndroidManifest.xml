@@ -14,18 +14,15 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Material3.Dark"
+        android:theme="@style/Theme.Material3.Dark.NoActionBar"
         tools:targetApi="31">
 
         <!-- Активности -->
-        <activity
-            android:name=".RegisterActivity"
-            android:theme="@style/Theme.Material3.Dark.NoActionBar" />
+        <activity android:name=".RegisterActivity" />
 
         <activity
             android:name=".LoginActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Material3.Dark.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
