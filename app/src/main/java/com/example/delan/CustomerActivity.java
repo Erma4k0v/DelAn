@@ -3,7 +3,9 @@ package com.example.delan;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerActivity extends AppCompatActivity {
-    Button exitBtn;
     FirebaseAuth auth;
     FirebaseFirestore db;
     RecyclerView recyclerView;
@@ -32,7 +33,6 @@ public class CustomerActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        exitBtn = findViewById(R.id.exit_btn);
         recyclerView = findViewById(R.id.recycler_view);
 
         productList = new ArrayList<>();
@@ -46,12 +46,23 @@ public class CustomerActivity extends AppCompatActivity {
         recyclerView.setAdapter(productAdapter);
 
         loadProducts();
+    }
 
-        exitBtn.setOnClickListener(v -> {
-            auth.signOut();
-            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-            finish();
-        });
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_profile){
+            startActivity(new Intent(this, ProfileActivity.class));
+            return true;
+        }
+        return false;
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -60,7 +71,9 @@ public class CustomerActivity extends AppCompatActivity {
             if (task.isSuccessful() && task.getResult() != null) {
                 for (DocumentSnapshot document : task.getResult()) {
                     Product product = document.toObject(Product.class);
-                    productList.add(product);
+                    if (product != null) {
+                        productList.add(product);
+                    }
                 }
                 productAdapter.notifyDataSetChanged();
             } else {

@@ -15,14 +15,6 @@
         android:layout_marginBottom="20dp"
         tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/exit_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Exit"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"/>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
