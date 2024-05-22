@@ -50,20 +50,15 @@ public class LoginActivity extends AppCompatActivity {
             auth.signInWithEmailAndPassword(emailText, passwordText)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
-                            // Аутентификация успешна, получаем UID пользователя
                             FirebaseUser user = auth.getCurrentUser();
                             if (user != null) {
                                 String uid = user.getUid();
-
-                                // Получаем данные пользователя из Firestore
                                 db.collection("users").document(uid).get()
                                         .addOnCompleteListener(task1 -> {
                                             if (task1.isSuccessful()) {
                                                 DocumentSnapshot document = task1.getResult();
                                                 if (document.exists()) {
-                                                    // Данные успешно получены, можно их использовать
                                                     String role = document.getString("role");
-                                                    // Перенаправляем пользователя в зависимости от его роли
                                                     switch (role) {
                                                         case "Поставщик":
                                                             startActivity(new Intent(this, SupplierActivity.class));
@@ -77,11 +72,9 @@ public class LoginActivity extends AppCompatActivity {
                                                     }
                                                     finish();
                                                 } else {
-                                                    // Документ не найден
                                                     Toast.makeText(this, "Документ не найден", Toast.LENGTH_SHORT).show();
                                                 }
                                             } else {
-                                                // Ошибка при получении данных
                                                 Toast.makeText(this, "Ошибка получения данных", Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -97,7 +90,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Проверяем, если пользователь уже вошел в систему
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
             db.collection("users").document(currentUser.getUid()).get()
@@ -105,9 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (task1.isSuccessful()) {
                             DocumentSnapshot document = task1.getResult();
                             if (document.exists()) {
-                                // Данные успешно получены, можно их использовать
                                 String role = document.getString("role");
-                                // Перенаправляем пользователя в зависимости от его роли
                                 switch (role) {
                                     case "Поставщик":
                                         startActivity(new Intent(this, SupplierActivity.class));
@@ -121,11 +111,9 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                                 finish();
                             } else {
-                                // Документ не найден
                                 Toast.makeText(this, "Документ не найден", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            // Ошибка при получении данных
                             Toast.makeText(this, "Ошибка получения данных", Toast.LENGTH_SHORT).show();
                         }
                     });

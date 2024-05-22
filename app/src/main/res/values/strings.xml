@@ -1,19 +1,41 @@
 <resources>
     <string name="app_name">DelAn</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
+    <string name="username">Логин</string>
+    <string name="password">Пароль</string>
     <string name="email">Email</string>
-    <string name="btn_login">LOGIN</string>
-    <string name="register">Register</string>
-    <string name="btn_register">REGISTER</string>
+    <string name="btn_login">ВОЙТИ</string>
+    <string name="register">Зарегистрироваться</string>
+    <string name="btn_register">ЗАРЕГИСТРИРОВАТЬСЯ</string>
     <string name="btn_google">GOOGLE</string>
-    <string name="Exit">Выйти</string>
-    <string name="login">Login</string>
-    <string name="buy_now">Buy Now</string>
+    <string name="Exit">Выйти из аккаунта</string>
+    <string name="login">Логин</string>
+    <string name="buy_now">Купить сейчас</string>
     <string name="Supplier">Поставщик</string>
+    <string name="warehouse_name">Название склада</string>
     <string-array name="UserType">
         <item>Поставщик</item>
         <item>Заказчик</item>
         <item>Курьер</item>
     </string-array>
+    <string name="title_activity_profile">Profile</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="profile">Профиль</string>
+    <string name="Address">Адрес</string>
+    <string name="first_name">Имя</string>
+    <string name="last_name">Фамилия</string>
+    <string name="update_button">Обновить</string>
 </resources>

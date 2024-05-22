@@ -3,20 +3,22 @@ package com.example.delan;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 
 public class SupplierActivity extends AppCompatActivity {
     TextInputEditText productName, productDescription, productPrice, productImageUrl;
-    Button addProductBtn, exitBtn;
+    Button addProductBtn;
     FirebaseFirestore db;
 
     @Override
@@ -29,7 +31,6 @@ public class SupplierActivity extends AppCompatActivity {
         productPrice = findViewById(R.id.product_price);
         productImageUrl = findViewById(R.id.product_image_url);
         addProductBtn = findViewById(R.id.add_product_btn);
-        exitBtn = findViewById(R.id.exit_btn);
 
         db = FirebaseFirestore.getInstance();
 
@@ -64,13 +65,23 @@ public class SupplierActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> Toast.makeText(this, "Ошибка при добавлении товара", Toast.LENGTH_SHORT).show());
         });
+    }
 
-        exitBtn.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(intent);
-            finish();
-        });
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_profile){
+            startActivity(new Intent(this, ProfileActivity.class));
+            return true;
+        }
+        return false;
     }
 }
 

@@ -1,0 +1,84 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="10pt">
+
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:gravity="center"
+            android:text="@string/profile"
+            android:textSize="34sp" />
+
+        <EditText
+            android:id="@+id/customer_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/Address"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:visibility="gone"
+            tools:ignore="VisualLintTextFieldSize" />
+
+        <EditText
+            android:id="@+id/first_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/first_name"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:visibility="gone"
+            tools:ignore="VisualLintTextFieldSize" />
+
+        <EditText
+            android:id="@+id/last_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/last_name"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:visibility="gone"
+            tools:ignore="VisualLintTextFieldSize" />
+
+        <EditText
+            android:id="@+id/warehouse_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:ems="10"
+            android:hint="@string/warehouse_name"
+            android:minHeight="48dp"
+            android:visibility="gone"
+            tools:ignore="VisualLintTextFieldSize" />
+
+        <Button
+            android:id="@+id/update_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="20dp"
+            android:text="@string/update_button" />
+
+        <Button
+            android:id="@+id/exit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:text="@string/Exit" />
+
+</LinearLayout>
