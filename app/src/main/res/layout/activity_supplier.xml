@@ -1,25 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:context=".SupplierActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Supplier Activity"
-        android:textSize="24sp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
-        tools:ignore="HardcodedText" />
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/exit_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Exit"
-        android:layout_gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Supplier Activity"
+            android:textSize="24sp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            tools:ignore="HardcodedText" />
 
-</LinearLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/product_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Название товара"
+                tools:ignore="HardcodedText" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/product_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Описание товара"
+                tools:ignore="HardcodedText" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/product_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Цена товара"
+                android:inputType="numberDecimal"
+                tools:ignore="HardcodedText" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/product_image_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="URL изображения товара"
+                tools:ignore="HardcodedText" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/add_product_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Добавить товар"
+            android:layout_marginTop="16dp"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/exit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Exit"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>
