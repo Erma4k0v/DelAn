@@ -10,6 +10,7 @@
     <string name="Exit">Выйти</string>
     <string name="login">Login</string>
     <string name="buy_now">Buy Now</string>
+    <string name="Supplier">Поставщик</string>
     <string-array name="UserType">
         <item>Поставщик</item>
         <item>Заказчик</item>
