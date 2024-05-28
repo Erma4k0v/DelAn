@@ -93,7 +93,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                     Toast.makeText(this, "Заказ размещен", Toast.LENGTH_SHORT).show();
                     saveOrderId(productId, orderId); // Сохраняем идентификатор заказа
                     saveOrderStatus(productId, "Order Placed");
-                    updateButtonVisibility("Order Placed");
+                    buyButton.setVisibility(View.GONE);
+                    receivedButton.setVisibility(View.VISIBLE);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Ошибка при размещении заказа", e);
@@ -110,7 +111,9 @@ public class ProductDetailActivity extends AppCompatActivity {
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Товар получен", Toast.LENGTH_SHORT).show();
                         saveOrderStatus(product.getId(), "Product Received");
-                        updateButtonVisibility("Product Received");
+                        receivedButton.setEnabled(false);
+                        buyButton.setVisibility(View.VISIBLE);
+                        receivedButton.setVisibility(View.GONE);
                     })
                     .addOnFailureListener(e -> {
                         Log.e(TAG, "Ошибка при обновлении статуса", e);
@@ -136,33 +139,26 @@ public class ProductDetailActivity extends AppCompatActivity {
                             String status = document.getString("status");
                             saveOrderId(productId, document.getId()); // Сохраняем идентификатор заказа для продукта
                             Log.d(TAG, "Order Status: " + status);
-                            updateButtonVisibility(status);
-                            return;
+                            if ("Product Received".equals(status)) {
+                                buyButton.setVisibility(View.VISIBLE);
+                                receivedButton.setVisibility(View.GONE);
+                                receivedButton.setEnabled(false);
+                                return;
+                            } else if ("Order Placed".equals(status)) {
+                                buyButton.setVisibility(View.GONE);
+                                receivedButton.setVisibility(View.VISIBLE);
+                                receivedButton.setEnabled(true);
+                                return;
+                            }
                         }
                     }
-                    updateButtonVisibility(null); // Нет заказов для этого продукта
+                    buyButton.setVisibility(View.VISIBLE);
+                    receivedButton.setVisibility(View.GONE);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Ошибка при проверке статуса заказа", e);
                     Toast.makeText(this, "Ошибка при проверке статуса заказа", Toast.LENGTH_SHORT).show();
                 });
-    }
-
-    private void updateButtonVisibility(String status) {
-        if ("Product Received".equals(status)) {
-            buyButton.setText("Купить снова");
-            buyButton.setVisibility(View.VISIBLE);
-            receivedButton.setVisibility(View.GONE);
-            receivedButton.setEnabled(false);
-        } else if ("Order Placed".equals(status)) {
-            buyButton.setVisibility(View.GONE);
-            receivedButton.setVisibility(View.VISIBLE);
-            receivedButton.setEnabled(true);
-        } else {
-            buyButton.setText("Купить");
-            buyButton.setVisibility(View.VISIBLE);
-            receivedButton.setVisibility(View.GONE);
-        }
     }
 
     private void saveOrderStatus(String productId, String status) {
@@ -198,3 +194,4 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 }
+
