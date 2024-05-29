@@ -45,7 +45,7 @@ public class SupplierActivity extends AppCompatActivity {
             String priceString = Objects.requireNonNull(productPrice.getText()).toString().trim();
             String imageUrl = Objects.requireNonNull(productImageUrl.getText()).toString().trim();
 
-            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(description) || TextUtils.isEmpty(priceString) || TextUtils.isEmpty(imageUrl)) {
+            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(description) || TextUtils.isEmpty(priceString)) {
                 Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -63,13 +63,21 @@ public class SupplierActivity extends AppCompatActivity {
 
             db.collection("products").add(product)
                     .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(this, "Товар добавлен", Toast.LENGTH_SHORT).show();
-                        productName.setText("");
-                        productDescription.setText("");
-                        productPrice.setText("");
-                        productImageUrl.setText("");
+                        String productId = documentReference.getId();
+                        product.setProductId(productId);
+                        db.collection("products").document(productId)
+                                .set(product)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(this, "Товар добавлен", Toast.LENGTH_SHORT).show();
+                                    productName.setText("");
+                                    productDescription.setText("");
+                                    productPrice.setText("");
+                                    productImageUrl.setText("");
+                                })
+                                .addOnFailureListener(e -> Toast.makeText(this, "Ошибка при добавлении товара", Toast.LENGTH_SHORT).show());
                     })
                     .addOnFailureListener(e -> Toast.makeText(this, "Ошибка при добавлении товара", Toast.LENGTH_SHORT).show());
+
         });
 
         // Получение уведомлений о доставленных заказах

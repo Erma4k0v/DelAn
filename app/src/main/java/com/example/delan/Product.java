@@ -3,18 +3,18 @@ package com.example.delan;
 import java.io.Serializable;
 
 public class Product implements Serializable {
-    private String id;  // Новый идентификатор продукта
+    private String productId;
     private String name;
     private String imageUrl;
     private String description;
     private double price;
-    private String supplierId;  // Новый идентификатор поставщика
+    private String supplierId;
 
     // Пустой конструктор необходим для Firestore
     public Product() {}
 
-    public Product(String id, String name, String imageUrl, String description, double price, String supplierId) {
-        this.id = id;
+    public Product(String productId, String name, String imageUrl, String description, double price, String supplierId) {
+        this.productId = productId;
         this.name = name;
         this.imageUrl = imageUrl;
         this.description = description;
@@ -22,12 +22,12 @@ public class Product implements Serializable {
         this.supplierId = supplierId;
     }
 
-    public String getId() {
-        return id;
+    public String getProductId() {
+        return productId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public String getName() {

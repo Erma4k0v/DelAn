@@ -1,6 +1,5 @@
 package com.example.delan;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,78 +21,69 @@ import java.util.Map;
 public class ProductDetailActivity extends AppCompatActivity {
     private static final String TAG = "ProductDetailActivity";
 
-    ImageView productImage;
-    TextView productName, productDescription, productPrice;
-    Button buyButton, receivedButton;
+    private ImageView productImage;
+    private TextView productName, productDescription, productPrice;
+    private Button buyButton, receivedButton;
 
     private FirebaseAuth auth;
     private FirebaseFirestore db;
-    private String currentProductId;
+    private Product product;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
 
+        initViews();
+        initFirebase();
+
+        product = (Product) getIntent().getSerializableExtra("product");
+
+        if (product != null) {
+            displayProductDetails(product);
+            checkOrderStatus(product);
+
+            buyButton.setOnClickListener(v -> createOrder(product));
+            receivedButton.setOnClickListener(v -> markProductReceived(product));
+        } else {
+            Log.e(TAG, "Product is null");
+            Toast.makeText(this, "Продукт не найден", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void initViews() {
         productImage = findViewById(R.id.product_image);
         productName = findViewById(R.id.product_name);
         productDescription = findViewById(R.id.product_description);
         productPrice = findViewById(R.id.product_price);
         buyButton = findViewById(R.id.buy_button);
         receivedButton = findViewById(R.id.received_button);
-
-        auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-
-        Product product = (Product) getIntent().getSerializableExtra("product");
-
-        if (product != null) {
-            currentProductId = product.getId();
-            Glide.with(this).load(product.getImageUrl()).into(productImage);
-            productName.setText(product.getName());
-            productDescription.setText(product.getDescription());
-            productPrice.setText(String.format("$%.2f", product.getPrice()));
-
-            checkOrderStatus(product);
-
-            buyButton.setOnClickListener(v -> placeOrder(product));
-            receivedButton.setOnClickListener(v -> markProductReceived(product));
-        } else {
-            Log.e(TAG, "Product is null");
-        }
     }
 
-    private void placeOrder(Product product) {
-        String customerId = auth.getCurrentUser().getUid();
-        String orderId = db.collection("orders").document().getId();
-        String productId = product.getId();
-        String productName = product.getName();
-        String productUrl = product.getImageUrl();
-        String customerAddress = "exampleCustomerAddress";  // Замените на фактический адрес клиента из профиля
-        String supplierId = product.getSupplierId();
-        String supplierWarehouse = "exampleSupplierWarehouse";  // Замените на фактический склад поставщика из профиля
-        String courierId = "";
-        String status = "Order Placed";
+    private void initFirebase() {
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+    }
 
+    private void displayProductDetails(Product product) {
+        Glide.with(this).load(product.getImageUrl()).into(productImage);
+        productName.setText(product.getName());
+        productDescription.setText(product.getDescription());
+        productPrice.setText(String.format("$%.2f", product.getPrice()));
+    }
+
+    private void createOrder(Product product) {
+        String productId = product.getProductId();
         Map<String, Object> order = new HashMap<>();
-        order.put("orderId", orderId);
         order.put("productId", productId);
-        order.put("productName", productName);
-        order.put("productUrl", productUrl);
-        order.put("customerId", customerId);
-        order.put("customerAddress", customerAddress);
-        order.put("supplierId", supplierId);
-        order.put("supplierWarehouse", supplierWarehouse);
-        order.put("courierId", courierId);
-        order.put("status", status);
+        order.put("productName", product.getName());
+        order.put("customerId", auth.getCurrentUser().getUid());
+        order.put("status", "Заказано");
 
-        db.collection("orders").document(orderId).set(order)
-                .addOnSuccessListener(aVoid -> {
+        db.collection("orders").add(order)
+                .addOnSuccessListener(documentReference -> {
                     Toast.makeText(this, "Заказ размещен", Toast.LENGTH_SHORT).show();
-                    saveOrderId(productId, orderId); // Сохраняем идентификатор заказа
-                    saveOrderStatus(productId, "Order Placed");
-                    buyButton.setVisibility(View.GONE);
-                    receivedButton.setVisibility(View.VISIBLE);
+                    updateOrderButtons(false, true);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Ошибка при размещении заказа", e);
@@ -103,57 +92,25 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void markProductReceived(Product product) {
-        String orderId = getSavedOrderId(product.getId());
-        Log.d(TAG, "Order ID: " + orderId);
-        if (orderId != null) {
-            db.collection("orders").document(orderId)
-                    .update("status", "Product Received")
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(this, "Товар получен", Toast.LENGTH_SHORT).show();
-                        saveOrderStatus(product.getId(), "Product Received");
-                        receivedButton.setEnabled(false);
-                        buyButton.setVisibility(View.VISIBLE);
-                        receivedButton.setVisibility(View.GONE);
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Ошибка при обновлении статуса", e);
-                        Toast.makeText(this, "Ошибка при обновлении статуса", Toast.LENGTH_SHORT).show();
-                    });
-        } else {
-            Log.e(TAG, "Ошибка: не найден идентификатор заказа для продукта с ID: " + product.getId());
-            Toast.makeText(this, "Ошибка: не найден идентификатор заказа", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void checkOrderStatus(Product product) {
-        String customerId = auth.getCurrentUser().getUid();
-        String productId = product.getId();
-
         db.collection("orders")
-                .whereEqualTo("customerId", customerId)
-                .whereEqualTo("productId", productId)
+                .whereEqualTo("customerId", auth.getCurrentUser().getUid())
+                .whereEqualTo("productId", product.getProductId())
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-                            String status = document.getString("status");
-                            saveOrderId(productId, document.getId()); // Сохраняем идентификатор заказа для продукта
-                            Log.d(TAG, "Order Status: " + status);
-                            if ("Product Received".equals(status)) {
-                                buyButton.setVisibility(View.VISIBLE);
-                                receivedButton.setVisibility(View.GONE);
-                                receivedButton.setEnabled(false);
-                                return;
-                            } else if ("Order Placed".equals(status)) {
-                                buyButton.setVisibility(View.GONE);
-                                receivedButton.setVisibility(View.VISIBLE);
-                                receivedButton.setEnabled(true);
-                                return;
-                            }
-                        }
+                    for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                        String orderId = document.getId();
+                        db.collection("orders").document(orderId)
+                                .update("status", "Доставлено")
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(this, "Товар получен", Toast.LENGTH_SHORT).show();
+                                    updateOrderButtons(false, true);
+                                    receivedButton.setEnabled(false);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Ошибка при обновлении статуса", e);
+                                    Toast.makeText(this, "Ошибка при обновлении статуса", Toast.LENGTH_SHORT).show();
+                                });
                     }
-                    buyButton.setVisibility(View.VISIBLE);
-                    receivedButton.setVisibility(View.GONE);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Ошибка при проверке статуса заказа", e);
@@ -161,37 +118,52 @@ public class ProductDetailActivity extends AppCompatActivity {
                 });
     }
 
-    private void saveOrderStatus(String productId, String status) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("orderStatus_" + productId, status);
-        editor.apply();
+    private void checkOrderStatus(Product product) {
+        db.collection("orders")
+                .whereEqualTo("customerId", auth.getCurrentUser().getUid())
+                .whereEqualTo("productId", product.getProductId())
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    boolean orderFound = false;
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                            String status = document.getString("status");
+                            Log.d(TAG, "Статус заказа: " + status);
+                            orderFound = true;
+                            if ("Доставлено".equals(status)) {
+                                updateOrderButtons(false, true);
+                                receivedButton.setEnabled(false);
+                                return;
+                            } else if ("Заказано".equals(status)) {
+                                updateOrderButtons(false, true);
+                                receivedButton.setEnabled(true);
+                                return;
+                            }
+                        }
+                    }
+                    if (!orderFound) {
+                        updateOrderButtons(true, false);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Ошибка при проверке статуса заказа", e);
+                    Toast.makeText(this, "Ошибка при проверке статуса заказа", Toast.LENGTH_SHORT).show();
+                    updateOrderButtons(true, false);
+                });
     }
 
-    private String getSavedOrderStatus(String productId) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPreferences.getString("orderStatus_" + productId, null);
-    }
-
-    private void saveOrderId(String productId, String orderId) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("orderId_" + productId, orderId);
-        editor.apply();
-    }
-
-    private String getSavedOrderId(String productId) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPreferences.getString("orderId_" + productId, null);
+    private void updateOrderButtons(boolean showBuy, boolean showReceived) {
+        buyButton.setVisibility(showBuy ? View.VISIBLE : View.GONE);
+        receivedButton.setVisibility(showReceived ? View.VISIBLE : View.GONE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Product product = (Product) getIntent().getSerializableExtra("product");
         if (product != null) {
             checkOrderStatus(product);
+        } else {
+            Log.e(TAG, "Product is null in onResume");
         }
     }
 }
-
