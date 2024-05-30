@@ -82,7 +82,7 @@ public class SupplierActivity extends AppCompatActivity {
 
         // Получение уведомлений о доставленных заказах
         db.collection("orders")
-                .whereEqualTo("status", "Delivered")
+                .whereEqualTo("status", "Доставлено")
                 .whereEqualTo("supplierId", auth.getCurrentUser().getUid())
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {

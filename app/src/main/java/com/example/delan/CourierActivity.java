@@ -17,6 +17,8 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.Arrays;
+
 public class CourierActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseFirestore db;
@@ -35,37 +37,51 @@ public class CourierActivity extends AppCompatActivity {
         orderActionButton = findViewById(R.id.order_action_button);
         orderDetailsTextView = findViewById(R.id.order_details_text_view);
 
+        loadOrders();
+
+        orderActionButton.setOnClickListener(v -> handleOrderAction());
+    }
+
+    private void loadOrders() {
         db.collection("orders")
-                .whereEqualTo("status", "Order Placed")
+                .whereIn("status", Arrays.asList("Заказано", "Заказ принят"))
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
                         Toast.makeText(this, "Ошибка при получении заказов", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         QueryDocumentSnapshot document = dc.getDocument();
                         orderId = document.getId();
-                        String productName = document.getString("productName");
+                        String productId = document.getString("productId");
                         String customerAddress = document.getString("customerAddress");
-                        String supplierWarehouse = document.getString("supplierWarehouse");
+                        String supplierWarehouse = document.getString("warehouse");
 
-                        // Отображаем сообщение о новом заказе
-                        displayOrderDetails(orderId, productName, customerAddress, supplierWarehouse);
+                        fetchProductNameAndDisplayOrderDetails(productId, customerAddress, supplierWarehouse, document.getString("status"));
                     }
                 });
+    }
 
-        orderActionButton.setOnClickListener(v -> handleOrderAction());
+    private void fetchProductNameAndDisplayOrderDetails(String productId, String customerAddress, String supplierWarehouse, String status) {
+        db.collection("products").document(productId).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        String productName = task.getResult().getString("name");
+                        displayOrderDetails(orderId, productName, customerAddress, supplierWarehouse, status);
+                    } else {
+                        Toast.makeText(this, "Ошибка при получении данных продукта", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void handleOrderAction() {
         db.collection("orders").document(orderId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     String currentStatus = documentSnapshot.getString("status");
-                    if ("Order Placed".equals(currentStatus)) {
-                        updateOrderStatus(orderId, "Courier Accepted");
-                    } else if ("Courier Accepted".equals(currentStatus)) {
-                        updateOrderStatus(orderId, "Delivered");
+                    if ("Заказано".equals(currentStatus)) {
+                        updateOrderStatus(orderId, "Заказ принят");
+                    } else if ("Заказ принят".equals(currentStatus)) {
+                        updateOrderStatus(orderId, "Доставлено");
                     }
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Ошибка при получении статуса заказа", Toast.LENGTH_SHORT).show());
@@ -76,19 +92,23 @@ public class CourierActivity extends AppCompatActivity {
                 .update("status", status)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Статус обновлен: " + status, Toast.LENGTH_SHORT).show();
-                    if ("Delivered".equals(status)) {
+                    if ("Доставлено".equals(status)) {
                         orderActionButton.setText("Заказ выполнен");
                         orderActionButton.setEnabled(false);
-                    } else if ("Courier Accepted".equals(status)) {
-                        orderActionButton.setText("Заказ выполнен");
+                    } else if ("Заказ принят".equals(status)) {
+                        orderActionButton.setText("Доставить заказ");
                     }
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Ошибка при обновлении статуса", Toast.LENGTH_SHORT).show());
     }
 
-    private void displayOrderDetails(String orderId, String productName, String customerAddress, String supplierWarehouse) {
+    private void displayOrderDetails(String orderId, String productName, String customerAddress, String supplierWarehouse, String status) {
         orderDetailsTextView.setText("Заказ: " + productName + "\nАдрес клиента: " + customerAddress + "\nСклад поставщика: " + supplierWarehouse);
-        orderActionButton.setText("Принять заказ");
+        if ("Заказано".equals(status)) {
+            orderActionButton.setText("Принять заказ");
+        } else if ("Заказ принят".equals(status)) {
+            orderActionButton.setText("Доставить заказ");
+        }
         orderActionButton.setEnabled(true);
     }
 

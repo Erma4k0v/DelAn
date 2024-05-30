@@ -49,7 +49,7 @@
             android:id="@+id/passwordConfirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/password"
+            android:hint="@string/passwordConfirm"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
