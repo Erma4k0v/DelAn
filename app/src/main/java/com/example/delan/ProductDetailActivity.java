@@ -129,8 +129,12 @@ public class ProductDetailActivity extends AppCompatActivity {
                         String status = document.getString("status");
 
                         if ("Доставлено".equals(status)) {
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("status", "Получено");
+                            updates.put("notified", 0);
+
                             db.collection("orders").document(orderId)
-                                    .update("status", "Получено")
+                                    .update(updates)
                                     .addOnSuccessListener(aVoid -> {
                                         Toast.makeText(this, "Товар получен", Toast.LENGTH_SHORT).show();
                                         updateOrderButtons(false, true);
@@ -140,6 +144,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                                         Log.e(TAG, "Ошибка при обновлении статуса", e);
                                         Toast.makeText(this, "Ошибка при обновлении статуса", Toast.LENGTH_SHORT).show();
                                     });
+
                         } else {
                             Toast.makeText(this, "Товар ещё не доставлен", Toast.LENGTH_SHORT).show();
                         }

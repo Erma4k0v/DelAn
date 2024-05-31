@@ -1,5 +1,9 @@
 package com.example.delan;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,12 +18,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 
 public class SupplierActivity extends AppCompatActivity {
+    private static final int JOB_ID = 123;
     TextInputEditText productName, productDescription, productPrice, productImageUrl;
     Button addProductBtn;
     FirebaseFirestore db;
@@ -38,6 +42,7 @@ public class SupplierActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        scheduleJob();
 
         addProductBtn.setOnClickListener(v -> {
             String name = Objects.requireNonNull(productName.getText()).toString().trim();
@@ -77,26 +82,21 @@ public class SupplierActivity extends AppCompatActivity {
                                 .addOnFailureListener(e -> Toast.makeText(this, "Ошибка при добавлении товара", Toast.LENGTH_SHORT).show());
                     })
                     .addOnFailureListener(e -> Toast.makeText(this, "Ошибка при добавлении товара", Toast.LENGTH_SHORT).show());
-
         });
+    }
 
-        // Получение уведомлений о доставленных заказах
-        db.collection("orders")
-                .whereEqualTo("status", "Доставлено")
-                .whereEqualTo("supplierId", auth.getCurrentUser().getUid())
-                .addSnapshotListener((snapshots, e) -> {
-                    if (e != null) {
-                        Toast.makeText(this, "Ошибка при получении уведомлений", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+    private void scheduleJob() {
+        ComponentName componentName = new ComponentName(this, OrderStatusJobService.class);
+        JobInfo jobInfo = new JobInfo.Builder(JOB_ID, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .setPeriodic(15 * 60 * 1000)  // Каждую 1 минуту
+                .build();
 
-                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                        if (dc.getType() == DocumentChange.Type.ADDED) {
-                            String message = "Ваш товар продан и доставлен заказчику.";
-                            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        if (jobScheduler != null) {
+            jobScheduler.schedule(jobInfo);
+        }
     }
 
     @Override
