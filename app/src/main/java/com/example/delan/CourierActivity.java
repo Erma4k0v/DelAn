@@ -49,7 +49,7 @@ public class CourierActivity extends AppCompatActivity implements OrderAdapter.O
                         Toast.makeText(this, "Ошибка при получении заказов", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    orderList.clear();
+
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         QueryDocumentSnapshot document = dc.getDocument();
                         Order order = new Order();
@@ -59,15 +59,48 @@ public class CourierActivity extends AppCompatActivity implements OrderAdapter.O
                         order.setWarehouseAddress(document.getString("warehouse"));
                         order.setStatus(document.getString("status"));
 
-                        orderList.add(order);
+                        switch (dc.getType()) {
+                            case ADDED:
+                                if (!isOrderInList(order)) {
+                                    orderList.add(order);
+                                }
+                                break;
+                            case MODIFIED:
+                                updateOrderInList(order);
+                                break;
+                            case REMOVED:
+                                removeOrderFromList(order.getId());
+                                break;
+                        }
                     }
                     orderAdapter.notifyDataSetChanged();
 
-                    // Проверка на пустой список заказов
                     if (orderList.isEmpty()) {
                         Toast.makeText(this, "Нет заказов с текущими статусами", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private boolean isOrderInList(Order order) {
+        for (Order o : orderList) {
+            if (o.getId().equals(order.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void updateOrderInList(Order order) {
+        for (int i = 0; i < orderList.size(); i++) {
+            if (orderList.get(i).getId().equals(order.getId())) {
+                orderList.set(i, order);
+                break;
+            }
+        }
+    }
+
+    private void removeOrderFromList(String orderId) {
+        orderList.removeIf(order -> order.getId().equals(orderId));
     }
 
     @Override

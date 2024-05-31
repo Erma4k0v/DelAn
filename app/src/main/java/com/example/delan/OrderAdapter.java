@@ -46,8 +46,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     }
 
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
-        TextView orderDetailsTextView;
-        Button orderActionButton;
+        private final TextView orderDetailsTextView;
+        private final Button orderActionButton;
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -56,17 +56,25 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
 
         public void bind(final Order order, final OnOrderActionClickListener listener) {
-            orderDetailsTextView.setText("Заказ: " + order.getProductName() +
-                    "\nАдрес клиента: " + order.getCustomerAddress() +
-                    "\nСклад поставщика: " + order.getWarehouseAddress());
+            orderDetailsTextView.setText(String.format("Заказ: %s\nАдрес клиента: %s\nСклад поставщика: %s",
+                    order.getProductName(),
+                    order.getCustomerAddress(),
+                    order.getWarehouseAddress()));
 
-            if ("Заказано".equals(order.getStatus())) {
-                orderActionButton.setText("Принять заказ");
-            } else if ("Товар принят".equals(order.getStatus())) {
-                orderActionButton.setText("Доставить заказ");
-            } else {
-                orderActionButton.setText("Заказ выполнен");
-                orderActionButton.setEnabled(false);
+            switch (order.getStatus()) {
+                case "Заказано":
+                    orderActionButton.setText("Принять заказ");
+                    orderActionButton.setEnabled(true);
+                    break;
+                case "Товар принят":
+                    orderActionButton.setText("Доставить заказ");
+                    orderActionButton.setEnabled(true);
+                    break;
+                case "Доставлено":
+                default:
+                    orderActionButton.setText("Заказ выполнен");
+                    orderActionButton.setEnabled(false);
+                    break;
             }
 
             orderActionButton.setOnClickListener(v -> listener.onOrderActionClick(order));
