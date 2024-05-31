@@ -7,17 +7,19 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/order_details_text_view"
-        android:layout_width="match_parent"
+        android:id="@+id/order_list_title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Детали заказа"
-        android:textSize="16sp"
+        android:text="Список заказов"
+        android:textSize="24sp"
+        android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/order_action_button"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/orders_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Принять заказ" />
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
 </LinearLayout>
