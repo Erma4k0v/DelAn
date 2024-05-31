@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -22,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CourierActivity extends AppCompatActivity implements OrderAdapter.OnOrderActionClickListener {
-    private FirebaseAuth auth;
     private FirebaseFirestore db;
     private RecyclerView ordersRecyclerView;
     private OrderAdapter orderAdapter;
@@ -33,10 +31,8 @@ public class CourierActivity extends AppCompatActivity implements OrderAdapter.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_courier);
 
-        auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Инициализация RecyclerView
         ordersRecyclerView = findViewById(R.id.orders_recycler_view);
         ordersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         orderList = new ArrayList<>();
@@ -48,7 +44,7 @@ public class CourierActivity extends AppCompatActivity implements OrderAdapter.O
 
     private void loadOrders() {
         db.collection("orders")
-                .whereIn("status", Arrays.asList("Заказано", "Заказ принят"))
+                .whereIn("status", Arrays.asList("Заказано", "Товар принят"))
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
                         Toast.makeText(this, "Ошибка при получении заказов", Toast.LENGTH_SHORT).show();
@@ -67,6 +63,11 @@ public class CourierActivity extends AppCompatActivity implements OrderAdapter.O
                         orderList.add(order);
                     }
                     orderAdapter.notifyDataSetChanged();
+
+                    // Проверка на пустой список заказов
+                    if (orderList.isEmpty()) {
+                        Toast.makeText(this, "Нет заказов с текущими статусами", Toast.LENGTH_SHORT).show();
+                    }
                 });
     }
 
@@ -80,8 +81,8 @@ public class CourierActivity extends AppCompatActivity implements OrderAdapter.O
                 .addOnSuccessListener(documentSnapshot -> {
                     String currentStatus = documentSnapshot.getString("status");
                     if ("Заказано".equals(currentStatus)) {
-                        updateOrderStatus(order.getId(), "Заказ принят");
-                    } else if ("Заказ принят".equals(currentStatus)) {
+                        updateOrderStatus(order.getId(), "Товар принят");
+                    } else if ("Товар принят".equals(currentStatus)) {
                         updateOrderStatus(order.getId(), "Доставлено");
                     }
                 })
@@ -112,5 +113,11 @@ public class CourierActivity extends AppCompatActivity implements OrderAdapter.O
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadOrders();
     }
 }
