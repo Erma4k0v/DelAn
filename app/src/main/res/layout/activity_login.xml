@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
@@ -19,20 +20,28 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:boxCornerRadiusBottomEnd="10pt"
+        app:boxCornerRadiusBottomStart="10pt"
+        app:boxCornerRadiusTopEnd="10pt"
+        app:boxCornerRadiusTopStart="10pt">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:hint="@string/email" />
+            android:hint="@string/email"
+            android:inputType="textEmailAddress" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:boxCornerRadiusBottomEnd="10pt"
+        app:boxCornerRadiusBottomStart="10pt"
+        app:boxCornerRadiusTopEnd="10pt"
+        app:boxCornerRadiusTopStart="10pt">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password"

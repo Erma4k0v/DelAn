@@ -22,7 +22,6 @@ import java.util.List;
 
 public class CourierActivity extends AppCompatActivity implements OrderAdapter.OnOrderActionClickListener {
     private FirebaseFirestore db;
-    private RecyclerView ordersRecyclerView;
     private OrderAdapter orderAdapter;
     private List<Order> orderList;
 
@@ -33,7 +32,7 @@ public class CourierActivity extends AppCompatActivity implements OrderAdapter.O
 
         db = FirebaseFirestore.getInstance();
 
-        ordersRecyclerView = findViewById(R.id.orders_recycler_view);
+        RecyclerView ordersRecyclerView = findViewById(R.id.orders_recycler_view);
         ordersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         orderList = new ArrayList<>();
         orderAdapter = new OrderAdapter(this, orderList, this);

@@ -62,7 +62,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
             if ("Заказано".equals(order.getStatus())) {
                 orderActionButton.setText("Принять заказ");
-            } else if ("Заказ принят".equals(order.getStatus())) {
+            } else if ("Товар принят".equals(order.getStatus())) {
                 orderActionButton.setText("Доставить заказ");
             } else {
                 orderActionButton.setText("Заказ выполнен");
