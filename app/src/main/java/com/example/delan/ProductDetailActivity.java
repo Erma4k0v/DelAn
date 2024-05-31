@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -169,7 +168,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                                 updateOrderButtons(false, true);
                                 receivedButton.setEnabled(false);
                                 return;
-                            } else if ("Заказано".equals(status)|| ("Доставлено".equals(status))) {
+                            } else if ("Заказано".equals(status) || ("Доставлено".equals(status) || ("Товар принят".equals(status)))) {
                                 updateOrderButtons(false, true);
                                 receivedButton.setEnabled(true);
                                 return;
