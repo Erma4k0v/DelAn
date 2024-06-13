@@ -2,10 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="10pt">
-
+    android:padding="24dp"
+    android:background="#000000"
+    tools:context=".ProfileActivity">
 
         <TextView
             android:id="@+id/textView"
@@ -14,71 +16,118 @@
             android:layout_marginBottom="50dp"
             android:gravity="center"
             android:text="@string/profile"
-            android:textSize="34sp" />
+            android:textSize="34sp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="sans-serif" />
 
-        <EditText
-            android:id="@+id/customer_address"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:autofillHints=""
-            android:ems="10"
-            android:hint="@string/Address"
-            android:inputType="text"
-            android:minHeight="48dp"
-            android:visibility="gone"
-            tools:ignore="VisualLintTextFieldSize" />
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxBackgroundColor="#FFFFFF">
 
-        <EditText
-            android:id="@+id/first_name"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/customer_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/Address"
+                    android:inputType="text"
+                    android:fontFamily="sans-serif"
+                    android:textColor="#000000"
+                    android:visibility="gone"
+                    tools:ignore="VisualLintTextFieldSize" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:autofillHints=""
-            android:ems="10"
-            android:hint="@string/first_name"
-            android:inputType="text"
-            android:minHeight="48dp"
-            android:visibility="gone"
-            tools:ignore="VisualLintTextFieldSize" />
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxBackgroundColor="#FFFFFF">
 
-        <EditText
-            android:id="@+id/last_name"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/first_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/first_name"
+                    android:inputType="text"
+                    android:fontFamily="sans-serif"
+                    android:textColor="#000000"
+                    android:visibility="gone"
+                    tools:ignore="VisualLintTextFieldSize" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:autofillHints=""
-            android:ems="10"
-            android:hint="@string/last_name"
-            android:inputType="text"
-            android:minHeight="48dp"
-            android:visibility="gone"
-            tools:ignore="VisualLintTextFieldSize" />
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxBackgroundColor="#FFFFFF">
 
-        <EditText
-            android:id="@+id/warehouse_name"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/last_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/last_name"
+                    android:inputType="text"
+                    android:fontFamily="sans-serif"
+                    android:textColor="#000000"
+                    android:visibility="gone"
+                    tools:ignore="VisualLintTextFieldSize" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:ems="10"
-            android:hint="@string/warehouse_name"
-            android:minHeight="48dp"
-            android:visibility="gone"
-            tools:ignore="VisualLintTextFieldSize" />
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxBackgroundColor="#FFFFFF">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/warehouse_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/warehouse_name"
+                    android:fontFamily="sans-serif"
+                    android:textColor="#000000"
+                    android:visibility="gone"
+                    tools:ignore="VisualLintTextFieldSize" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/update_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
             android:layout_marginBottom="20dp"
-            android:text="@string/update_button" />
+            android:text="@string/update_button"
+            android:backgroundTint="#6200EE"
+            android:textColor="#FFFFFF"
+            android:fontFamily="sans-serif" />
 
         <Button
             android:id="@+id/exit_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:text="@string/Exit" />
+            android:text="@string/Exit"
+            android:backgroundTint="#6200EE"
+            android:textColor="#FFFFFF"
+            android:fontFamily="sans-serif" />
 
 </LinearLayout>

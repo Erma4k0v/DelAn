@@ -129,6 +129,10 @@ public class ProductDetailActivity extends AppCompatActivity {
                         String status = document.getString("status");
 
                         if ("Доставлено".equals(status)) {
+                            // Если статус "Доставлено", меняем цвет кнопки на серый
+                            receivedButton.setBackgroundTintList(getResources().getColorStateList(R.color.gray_button_background));
+
+                            // Дополнительные действия по обработке получения товара
                             Map<String, Object> updates = new HashMap<>();
                             updates.put("status", "Получено");
                             updates.put("notified", 0);
@@ -155,6 +159,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     Toast.makeText(this, "Ошибка при проверке статуса заказа", Toast.LENGTH_SHORT).show();
                 });
     }
+
 
 
     private void checkOrderStatus(Product product) {
