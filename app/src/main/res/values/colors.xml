@@ -2,7 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="hint_color">#757575</color>
     <color name="colorPrimary">#6200EE</color> <!-- Цвет шапки (Primary) -->
     <color name="colorPrimaryDark">#6200EE</color> <!-- Цвет для статус-бара -->
     <color name="colorOnPrimary">#FFFFFF</color> <!-- Цвет текста и иконок на шапке -->

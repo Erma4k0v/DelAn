@@ -44,7 +44,9 @@
                 android:hint="Название товара"
                 android:fontFamily="sans-serif"
                 android:layout_marginBottom="10dp"
-                tools:ignore="HardcodedText" />
+                tools:ignore="HardcodedText"
+                android:textColorHint="#000"
+                />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
